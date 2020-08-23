@@ -3,7 +3,7 @@
 #include <math.h>
 
 #define PNUM 4
-#define SIZE 100000000
+#define SIZE 100
 //#define B_LENGTH SIZE / PNUM;
 #define Divide  (int)ceil(RAND_MAX / PNUM)
 
@@ -19,10 +19,11 @@ int main() {
 	//const ULONG m = (ULONG) pow(2, 32);
 	int *arr = (int *) calloc(SIZE, sizeof(int));
 	int *bucket[PNUM];
-	int i, j, k, count[PNUM];
+	int i, j, k, count[PNUM], index[PNUM];
 	for (int j=0; j<PNUM; j++) {
-		bucket[j] = (int *) calloc(SIZE, sizeof(int));
-		count[j] = 0;
+		//bucket[j] = (int *) calloc(SIZE, sizeof(int));
+		count[j] = 0;  // array count will now used for counting the numbers in each buckets
+		index[j] = 0; //add another counter to simplify the code
 	}
 
 	srand(12345);
@@ -30,18 +31,27 @@ int main() {
 	for(i=0; i<SIZE; i++) {
 		arr[i] = rand();
 		printf("%d ", arr[i]);
+		j = arr[i] / Divide;
+		count[j]++; 
 	}
 	printf("\n\n");
 	printf("Divide is: %d\n", Divide);
+	//allocate less memory than first version: 1/PNUM
+	//in the first version, memory was allocated before knowing the actual number of each bucket
+	//thus every bucket will allocate memory the same SIZE of original array in case of overflow
+	for (int j=0; j<PNUM; j++) {
+		bucket[j] = (int *) calloc(count[j], sizeof(int));
+	}
 
 	//divide and scatter array members into PNUM buckets
 	//lowest members will be sent to bucket 0 and higher number to next buckets
 	//numbers in buckets are unordered, but between buckets are ascend ordered
+
 	for(i=0; i<SIZE; i++) {
 		j = arr[i] / Divide;
-		k = count[j];
+		k = index[j];
 		bucket[j][k] = arr[i];
-		count[j]++ ;
+		index[j]++;
 	}
 
 	//quickSort is used in each bucket
@@ -49,7 +59,7 @@ int main() {
 		qsort(bucket[j], count[j], sizeof(int), cmpfunc);
 		printf("total %d numbers in bucket %d:\n", count[j], j);
 		for(k=0; k<count[j]; k++) {
-			printf("%d ", bucket[j][k]);
+			//printf("%d ", bucket[j][k]);
 			arr[i] = bucket[j][k];
 			i++;
 		}
@@ -63,6 +73,12 @@ int main() {
 	}
 
 	printf("\n\n");
+
+	free(arr);
+	// free(bucket);
+	for (int j=0; j<PNUM; j++) {
+		free(bucket[j]);
+	}
 
 	return 0;
 
