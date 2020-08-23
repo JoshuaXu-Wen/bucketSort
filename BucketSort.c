@@ -4,7 +4,7 @@
 
 #define PNUM 4
 #define SIZE 100000000
-#define B_LENGTH SIZE / PNUM;
+//#define B_LENGTH SIZE / PNUM;
 #define Divide  (int)ceil(RAND_MAX / PNUM)
 
 typedef unsigned long ULONG;
@@ -16,7 +16,7 @@ int cmpfunc (const void * a, const void * b) {
 
 
 int main() {
-	const ULONG m = (ULONG) pow(2, 32);
+	//const ULONG m = (ULONG) pow(2, 32);
 	int *arr = (int *) calloc(SIZE, sizeof(int));
 	int *bucket[PNUM];
 	int i, j, k, count[PNUM];
@@ -34,7 +34,9 @@ int main() {
 	printf("\n\n");
 	printf("Divide is: %d\n", Divide);
 
-
+	//divide and scatter array members into PNUM buckets
+	//lowest members will be sent to bucket 0 and higher number to next buckets
+	//numbers in buckets are unordered, but between buckets are ascend ordered
 	for(i=0; i<SIZE; i++) {
 		j = arr[i] / Divide;
 		k = count[j];
@@ -42,10 +44,7 @@ int main() {
 		count[j]++ ;
 	}
 
-	// for(j=0; j<PNUM; j++) {
-	// 	printf("count[%d] is: %d\n", j, count[j]);
-	// }
-
+	//quickSort is used in each bucket
 	for(i=0, j=0; j<PNUM; j++) {
 		qsort(bucket[j], count[j], sizeof(int), cmpfunc);
 		printf("total %d numbers in bucket %d:\n", count[j], j);
