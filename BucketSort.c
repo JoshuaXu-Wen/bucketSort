@@ -19,14 +19,11 @@ int main() {
 	//const ULONG m = (ULONG) pow(2, 32);
 	int *arr = (int *) calloc(SIZE, sizeof(int));
 	int *bucket[PNUM];
-	int i, j, k, count[PNUM], index[PNUM];
-	for (int j=0; j<PNUM; j++) {
-		//bucket[j] = (int *) calloc(SIZE, sizeof(int));
-		count[j] = 0;  // array count will now used for counting the numbers in each buckets
-		index[j] = 0; //add another counter to simplify the code
-	}
+	int i, j, k;
+	int count[PNUM] = {0}; // array count will now used for counting the numbers in each buckets
+	int index[PNUM] = {0}; //add another counter to simplify the code
 
-	srand(12345);
+	srand(12345); //random number generator seed
 	printf("original array is:\n");
 	for(i=0; i<SIZE; i++) {
 		arr[i] = rand();
@@ -45,7 +42,7 @@ int main() {
 
 	//divide and scatter array members into PNUM buckets
 	//lowest members will be sent to bucket 0 and higher number to next buckets
-	//numbers in buckets are unordered, but between buckets are ascend ordered
+	//numbers in buckets are unordered, but among buckets are ascend ordered
 
 	for(i=0; i<SIZE; i++) {
 		j = arr[i] / Divide;
